@@ -1,0 +1,14 @@
+[Unit]
+Description=Blinky
+After=network.target
+
+[Service]
+User=debian
+Group=debian
+ExecStart=/opt/blinky/blinky
+WorkingDirectory=/opt/blinky/
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
