@@ -41,6 +41,8 @@ bool Handler::init()
         return false;
     }
 
+    mBlinker1.init();
+    mBlinker2.init();
     mBlinker1.start(FREQ_DISCONNECTED);
 
     return true;
@@ -49,7 +51,6 @@ bool Handler::init()
 bool Handler::send_message(const std::string& message)
 {
     if (mServer.clientConnected()) {
-        mBlinker2.stop();
         mBlinker2.start(FREQ_MESSAGE, NUM_BLINK_MESSAGE);
         return mServer.sendString(message);
     }
@@ -75,7 +76,6 @@ void Handler::update(int event_id, ServerEvent::EventInfo evt)
             break;
         case ServerEvent::RECEIVED_MESSAGE:
             std::cout << "Received message: " << evt.message << std::endl;
-            mBlinker2.stop();
             mBlinker2.start(FREQ_MESSAGE, NUM_BLINK_MESSAGE);
             break;
         default:

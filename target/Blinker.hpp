@@ -30,7 +30,12 @@ public:
     ~Blinker();
 
     /**
-     * Start LED blinking thread.
+     * Initialize blinker thread.
+     */
+    void init();
+
+    /**
+     * Let LED blink.
      *
      * @param freq Blinking frequency in Hz.
      * @param blinks Number > 0 defines how often the LED shall blink.
@@ -38,7 +43,7 @@ public:
     void start(unsigned int freq, int blinks=-1);
 
     /**
-     * Stop blinking.
+     * Stop blinking LED.
      */
     void stop();
 
@@ -51,8 +56,8 @@ private:
     void run();
 
     LED* mLed; // LED instance
-    unsigned int mFreq; // Blinking frequency in Hz
-    int mBlinks; // Number of blinks before automatic end
+    std::atomic<unsigned int> mFreq; // Blinking frequency in Hz
+    std::atomic<int> mBlinks; // Number of blinks before automatic end
     bool mStateActive; // Thread state
     std::thread mThread; // Thread handle
     std::mutex mMtx; // Mutex use for conditional wait
