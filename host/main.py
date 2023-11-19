@@ -16,11 +16,20 @@ def connect(host: str, port: int) -> None:
 
     print("Try to connect to target...")
     try:
+        # Get socket
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            # Linux only
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
+            sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPIDLE, 1)
+            sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPINTVL, 1)
+            sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPCNT, 5)
+
+            # Connect to target
             sock.connect((host, port))
             print("Connected to target")
             fp = sock.makefile("r")
 
+            # Read incoming data line by line and process content
             for line in fp:
                 line = line.strip()
                 handle_message(line)

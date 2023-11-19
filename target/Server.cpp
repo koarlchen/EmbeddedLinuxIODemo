@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <string>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <iostream>
 #include <thread>
 #include <algorithm>
@@ -131,11 +132,44 @@ bool Server::acceptClient()
         return false;
     }
 
+    if (!configureKeepalive()) {
+        std::cerr << "Failed to configure keepalive" << std::endl;
+        close(mClientSocket);
+        return false;
+    }
+
     ServerEvent::EventInfo evt;
     evt.message = "";
     notifyObservers(ServerEvent::CLIENT_CONNECTED, evt);
 
     mStateConnected.store(true);
+
+    return true;
+}
+
+bool Server::configureKeepalive()
+{
+    int keepalive = 1;
+    int idle = 1;
+    int interval = 1;
+    int maxpkt = 5;
+
+    if (setsockopt(mClientSocket, SOL_SOCKET, SO_KEEPALIVE, &keepalive, sizeof(int)) < 0) {
+        std::cerr << std::strerror(errno) << std::endl;
+        return false;
+    }
+    if (setsockopt(mClientSocket, IPPROTO_TCP, TCP_KEEPIDLE, &idle, sizeof(int)) < 0) {
+        std::cerr << std::strerror(errno) << std::endl;
+        return false;
+    }
+    if (setsockopt(mClientSocket, IPPROTO_TCP, TCP_KEEPINTVL, &interval, sizeof(int)) < 0) {
+        std::cerr << std::strerror(errno) << std::endl;
+        return false;
+    }
+    if (setsockopt(mClientSocket, IPPROTO_TCP, TCP_KEEPCNT, &maxpkt, sizeof(int)) < 0) {
+        std::cerr << std::strerror(errno) << std::endl;
+        return false;
+    }
 
     return true;
 }
@@ -228,9 +262,13 @@ int Server::receiveMessage()
 
     auto numberOfBytes = static_cast<int>(recv(mClientSocket, msg_buf, MAX_LEN_BUFFER, 0));
     if (numberOfBytes < 0) {
-        std::cerr << std::strerror(errno) << std::endl;
-        mStateConnected.store(false);
-        return -1;
+        if (errno == ETIMEDOUT) {
+            numberOfBytes = 0;
+        } else {
+            mStateConnected.store(false);
+            std::cerr << std::strerror(errno) << std::endl;
+            return -1;
+        }
     }
 
     if (numberOfBytes == 0) {

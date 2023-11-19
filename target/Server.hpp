@@ -95,6 +95,12 @@ private:
     bool acceptClient();
 
     /**
+     * @brief Configure TCP keepalive for client socket.
+     * @return True if successful.
+     */
+    bool configureKeepalive();
+
+    /**
      * @brief Run receiver in while loop. Should launched in new thread.
      * @return True if successful.
      */
