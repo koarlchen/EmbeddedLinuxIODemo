@@ -2,10 +2,10 @@
 #include <chrono>
 #include <thread>
 
-#include "LED.hpp"
-#include "Button.hpp"
-#include "DS18B20.hpp"
-#include "Protocol.hpp"
+#include "hardware/LED.hpp"
+#include "hardware/Button.hpp"
+#include "hardware/DS18B20.hpp"
+#include "communication/Protocol.hpp"
 #include "Handler.hpp"
 
 using namespace std::chrono_literals;

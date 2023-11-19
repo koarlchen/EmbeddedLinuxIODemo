@@ -4,16 +4,10 @@ project(blinky)
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_CXX_STANDARD 23)
 
-add_executable(blinky
-    main.cpp
-    LED.cpp
-    Button.cpp
-    DS18B20.cpp
-    Blinker.cpp
-    Protocol.cpp
-    Server.cpp
-    Handler.cpp
-)
+add_executable(blinky main.cpp Handler.cpp)
+
+add_subdirectory(hardware)
+add_subdirectory(communication)
 
 target_compile_options(blinky PRIVATE -Wall -Wextra -Wpedantic)
 target_link_libraries(blinky PRIVATE gpiod gpiodcxx pthread)

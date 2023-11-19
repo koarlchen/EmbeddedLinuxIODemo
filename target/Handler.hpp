@@ -1,11 +1,11 @@
 #pragma once
 
 #include <string>
-#include "Observer.hpp"
-#include "ServerEvent.hpp"
-#include "Server.hpp"
-#include "LED.hpp"
-#include "Blinker.hpp"
+#include "communication/Observer.hpp"
+#include "communication/ServerEvent.hpp"
+#include "communication/Server.hpp"
+#include "hardware/LED.hpp"
+#include "hardware/Blinker.hpp"
 
 
 /**

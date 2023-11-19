@@ -4,7 +4,6 @@
 #include <map>
 #include <sstream>
 
-#include "Server.hpp"
 #include "Handler.hpp"
 
 // Number of blinks for each sent/received message
