@@ -38,6 +38,8 @@ bool Server::start()
     if (!mStateRun.load()) {
         std::cout << "Running server" << std::endl;
         mThdServer = std::thread(&Server::run, this);
+        auto handle = mThdServer.native_handle();
+        pthread_setname_np(handle, "server");
         mThdServer.detach();
         mStateRun.store(true);
         return true;
@@ -67,6 +69,8 @@ void Server::run()
 
             if (mStateReceiverEnable.load() && !mStateReceiverRun.load()) {
                 mThdReceiver = std::thread(&Server::runReceiver, this);
+                auto handle = mThdReceiver.native_handle();
+                pthread_setname_np(handle, "server_receiver");
                 mThdReceiver.detach();
             }
         }

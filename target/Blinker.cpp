@@ -1,4 +1,5 @@
 #include <iostream>
+#include <pthread.h>
 
 #include "Blinker.hpp"
 
@@ -28,6 +29,8 @@ void Blinker::start(unsigned int freq, int blinks)
 
         mStateActive = true;
         mThread = std::thread(&Blinker::run, this);
+        auto handle = mThread.native_handle();
+        pthread_setname_np(handle, "blinker");
         mThread.detach();
     }
 }
